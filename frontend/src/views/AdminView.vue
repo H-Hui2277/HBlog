@@ -69,9 +69,14 @@ function formatDate(dateString) {
   <div class="admin-view">
     <header class="admin-header">
       <h1 class="admin-title">文章管理</h1>
-      <button @click="goToCreate" class="btn btn-primary">
-        + 新建文章
-      </button>
+      <div class="header-actions">
+        <router-link to="/admin/categories" class="btn btn-secondary">
+          分类管理
+        </router-link>
+        <button @click="goToCreate" class="btn btn-primary">
+          + 新建文章
+        </button>
+      </div>
     </header>
 
     <div v-if="loading" class="loading">
@@ -144,6 +149,11 @@ function formatDate(dateString) {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .articles-table {

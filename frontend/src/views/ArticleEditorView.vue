@@ -5,10 +5,13 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { articleApi, uploadApi } from '../services/api'
 import { useAuthStore } from '../stores/auth'
+import { useCategoryStore } from '../stores/category'
+import CategorySelect from '../components/CategorySelect.vue'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const categoryStore = useCategoryStore()
 
 const isEditing = ref(false)
 const articleId = ref(null)
@@ -22,6 +25,7 @@ const quillInstance = ref(null)
 const image = ref(null)
 const imagePreview = ref('')
 const removeImage = ref(false)
+const categoryIds = ref([])
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -45,6 +49,8 @@ onMounted(async () => {
     return
   }
 
+  await categoryStore.loadCategoryTree()
+
   articleId.value = route.params.id
   isEditing.value = !!articleId.value
 
@@ -66,6 +72,9 @@ async function loadArticle() {
     content.value = article.content || ''
     if (article.imageUrl) {
       imagePreview.value = article.imageUrl
+    }
+    if (article.categoryIds) {
+      categoryIds.value = Array.from(article.categoryIds)
     }
   } catch (err) {
     error.value = '加载文章失败'
@@ -232,6 +241,10 @@ async function handleSubmit() {
     formData.append('title', title.value)
     formData.append('content', content.value)
 
+    if (categoryIds.value.length > 0) {
+      formData.append('categoryIds', categoryIds.value.join(','))
+    }
+
     if (image.value) {
       formData.append('image', image.value)
     }
@@ -322,6 +335,11 @@ function handleCancel() {
               </label>
             </div>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>分类</label>
+          <CategorySelect v-model="categoryIds" />
         </div>
 
         <div class="form-actions">

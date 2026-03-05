@@ -4,6 +4,7 @@ import ArticleView from '../views/ArticleView.vue'
 import LoginView from '../views/LoginView.vue'
 import AdminView from '../views/AdminView.vue'
 import ArticleEditorView from '../views/ArticleEditorView.vue'
+import CategoryView from '../views/CategoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +34,12 @@ const router = createRouter({
       path: '/admin/edit/:id?',
       name: 'article-editor',
       component: ArticleEditorView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/categories',
+      name: 'categories',
+      component: CategoryView,
       meta: { requiresAuth: true }
     }
   ]

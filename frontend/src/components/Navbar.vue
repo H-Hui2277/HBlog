@@ -25,7 +25,8 @@ function handleLogout() {
       <div class="nav-links">
         <router-link to="/" class="nav-link">首页</router-link>
         <template v-if="isAuthenticated">
-          <router-link to="/admin" class="nav-link">管理</router-link>
+          <router-link to="/admin" class="nav-link">文章</router-link>
+          <router-link to="/admin/categories" class="nav-link">分类</router-link>
           <button @click="handleLogout" class="nav-link btn-logout">退出</button>
         </template>
       </div>

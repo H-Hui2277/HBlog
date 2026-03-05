@@ -2,38 +2,37 @@ package com.hblog.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "articles")
-public class Article {
+@Table(name = "categories")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Column(nullable = false, unique = true)
+    private String slug;
 
-    private String imageUrl;
+    @Column(name = "parent_id")
+    private Long parentId;
 
-    @ManyToMany
-    @JoinTable(
-        name = "article_categories",
-        joinColumns = @JoinColumn(name = "article_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories = new HashSet<>();
+    @Column(name = "sort_order")
+    private Integer sortOrder = 0;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Transient
+    private List<Category> children = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -55,36 +54,36 @@ public class Article {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public String getSlug() {
+        return slug;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
-    public Set<Category> getCategories() {
-        return categories;
+    public Integer getSortOrder() {
+        return sortOrder;
     }
 
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -101,5 +100,13 @@ public class Article {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Category> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Category> children) {
+        this.children = children;
     }
 }

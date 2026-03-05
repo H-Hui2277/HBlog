@@ -1,6 +1,8 @@
 package com.hblog.dto;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ArticleDTO {
 
@@ -8,6 +10,7 @@ public class ArticleDTO {
     private String title;
     private String content;
     private String imageUrl;
+    private Set<Long> categoryIds = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -54,6 +57,14 @@ public class ArticleDTO {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Set<Long> getCategoryIds() {
+        return categoryIds;
+    }
+
+    public void setCategoryIds(Set<Long> categoryIds) {
+        this.categoryIds = categoryIds;
     }
 
     public LocalDateTime getCreatedAt() {

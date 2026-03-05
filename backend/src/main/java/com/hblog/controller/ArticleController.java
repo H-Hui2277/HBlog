@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -44,7 +48,8 @@ public class ArticleController {
     public ResponseEntity<ArticleDTO> createArticle(
             @RequestParam String title,
             @RequestParam String content,
-            @RequestParam(required = false) MultipartFile image) {
+            @RequestParam(required = false) MultipartFile image,
+            @RequestParam(required = false) String categoryIds) {
 
         logger.info("Creating article: title={}, content length={}, has image={}", title, content != null ? content.length() : 0, image != null && !image.isEmpty());
 
@@ -52,6 +57,16 @@ public class ArticleController {
             ArticleDTO dto = new ArticleDTO();
             dto.setTitle(title);
             dto.setContent(content != null ? content : "");
+
+            // Handle categoryIds
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                Set<Long> ids = Arrays.stream(categoryIds.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .map(Long::parseLong)
+                        .collect(Collectors.toSet());
+                dto.setCategoryIds(ids);
+            }
 
             if (image != null && !image.isEmpty()) {
                 String imageUrl = fileService.uploadFile(image);
@@ -73,7 +88,8 @@ public class ArticleController {
             @RequestParam String title,
             @RequestParam String content,
             @RequestParam(required = false) MultipartFile image,
-            @RequestParam(required = false) String removeImage) {
+            @RequestParam(required = false) String removeImage,
+            @RequestParam(required = false) String categoryIds) {
 
         logger.info("Updating article: id={}, title={}, content length={}", id, title, content != null ? content.length() : 0);
 
@@ -95,6 +111,18 @@ public class ArticleController {
                 dto.setImageUrl(articleService.getArticleById(id)
                         .map(ArticleDTO::getImageUrl)
                         .orElse(null));
+            }
+
+            // Handle categoryIds
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                Set<Long> ids = Arrays.stream(categoryIds.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .map(Long::parseLong)
+                        .collect(Collectors.toSet());
+                dto.setCategoryIds(ids);
+            } else {
+                dto.setCategoryIds(new HashSet<>());
             }
 
             return articleService.updateArticle(id, dto)
